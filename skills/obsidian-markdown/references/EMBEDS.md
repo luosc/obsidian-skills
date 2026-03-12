@@ -18,10 +18,15 @@
 
 ## External Images
 
+Standard Markdown image syntax with optional Obsidian resize extension:
+
 ```markdown
 ![Alt text](https://example.com/image.png)
-![Alt text|300](https://example.com/image.png)
+![Alt text|300](https://example.com/image.png)          Width only (aspect ratio preserved)
+![Alt text|640x480](https://example.com/image.png)      Width × Height
 ```
+
+The `|width` and `|widthxheight` resize syntax works for both external images `![]()` and internal embeds `![[]]`.
 
 ## Embed Audio
 

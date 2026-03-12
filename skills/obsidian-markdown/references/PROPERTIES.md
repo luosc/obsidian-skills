@@ -31,7 +31,7 @@ due: 2024-02-01T14:30:00
 | Date | `date: 2024-01-15` |
 | Date & Time | `due: 2024-01-15T14:30:00` |
 | List | `tags: [one, two]` or YAML list |
-| Links | `related: "[[Other Note]]"` |
+| Links | `related: "[[Other Note]]"` (quotes required) |
 
 ## Default Properties
 
@@ -59,3 +59,28 @@ tags:
   - nested/tag2
 ---
 ```
+
+## Internal Links in Properties
+
+Text and list properties that contain internal links **must** have the value enclosed in double quotes. Obsidian adds these automatically in the GUI, but they must be added manually when editing raw Markdown or using templates.
+
+```yaml
+---
+link: "[[Other Note]]"
+linklist:
+  - "[[Note A]]"
+  - "[[Note B]]"
+---
+```
+
+## JSON Properties (Input Only)
+
+Obsidian can parse properties written as a JSON object inside the frontmatter delimiters:
+
+```markdown
+---
+{ "tags": ["journal"], "publish": false }
+---
+```
+
+**Understand** JSON properties when they appear in input. **Never generate** JSON properties — always output YAML. Obsidian converts JSON to YAML on save.
