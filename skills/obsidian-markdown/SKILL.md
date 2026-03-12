@@ -1,11 +1,43 @@
 ---
 name: obsidian-markdown
-description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific syntax. Use when working with .md files in Obsidian, or when the user mentions wikilinks, callouts, frontmatter, tags, embeds, or Obsidian notes.
+description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, Tasks plugin emoji format tasks, image insertion, and LLMwrite block processing. Use when working with .md files in Obsidian, or when the user mentions wikilinks, callouts, frontmatter, tags, embeds, tasks, or Obsidian notes.
 ---
 
 # Obsidian Flavored Markdown Skill
 
 Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark and GFM with wikilinks, embeds, callouts, properties, comments, and other syntax. This skill covers only Obsidian-specific extensions -- standard Markdown (headings, bold, italic, lists, quotes, code blocks, tables) is assumed knowledge.
+
+## Git Sync (Important)
+
+After completing any changes to an Obsidian vault:
+
+1. Check whether the vault directory contains a `.git` folder (i.e. is a git repository).
+2. If yes, **ask the user** whether they want to commit and sync the changes before doing anything.
+3. Only proceed with git operations if the user explicitly approves.
+4. When approved, the default workflow is:
+   ```bash
+   git pull --rebase
+   git add -A
+   git commit -m "openclaw {YYYY-MM-DD HH:MM}: {descriptive summary of changes}"
+   git push
+   ```
+5. Never commit or push automatically without user confirmation.
+
+## Output Formatting Rules
+
+- All Markdown examples or generated note content **MUST** be enclosed in a fenced code block with the `markdown` language identifier.
+- Template variables (placeholders for the user or another LLM to fill in) use curly braces: `{variable_name}`. This avoids ambiguity with wikilink `[[ ]]` and standard link `[ ]( )` syntax.
+- Always insert an empty line before any table so Obsidian renders it correctly.
+
+## Link Handling
+
+| Situation | Format to use |
+|-----------|--------------|
+| Linking to a note within the same vault | `[[Note Name]]` (wikilink — Obsidian tracks renames) |
+| Linking to an external URL | `[Text](https://example.com)` |
+| Linking to a note from LLM output meant to be portable | `[Text](path/to/Note.md)` (standard Markdown, URL-encode spaces as `%20`) |
+
+**Understanding wikilinks in input:** `[[Note]]`, `[[Note|Alias]]`, `[[Note#Heading]]`, `[[Note#^blockID]]` — all are valid and must be understood.
 
 ## Workflow: Creating an Obsidian Note
 
@@ -14,9 +46,10 @@ Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark an
 3. **Link related notes** using wikilinks (`[[Note]]`) for internal vault connections, or standard Markdown links for external URLs.
 4. **Embed content** from other notes, images, or PDFs using the `![[embed]]` syntax. See [EMBEDS.md](references/EMBEDS.md) for all embed types.
 5. **Add callouts** for highlighted information using `> [!type]` syntax. See [CALLOUTS.md](references/CALLOUTS.md) for all callout types.
-6. **Verify** the note renders correctly in Obsidian's reading view.
-
-> When choosing between wikilinks and Markdown links: use `[[wikilinks]]` for notes within the vault (Obsidian tracks renames automatically) and `[text](url)` for external URLs only.
+6. **Handle tasks** using standard task lists or the Tasks plugin Emoji Format. See [TASKS.md](references/TASKS.md) for full emoji format rules.
+7. **Process LLMwrite blocks** by replacing them with generated Markdown content. See [LLMWRITE.md](references/LLMWRITE.md) for rules.
+8. **Insert images** following the asset-folder workflow. See [IMAGES.md](references/IMAGES.md) for the full process.
+9. **Verify** the note renders correctly in Obsidian's reading view.
 
 ## Internal Links (Wikilinks)
 
@@ -152,6 +185,27 @@ Text with a footnote[^1].
 Inline footnote.^[This is inline.]
 ```
 
+## Tasks (Obsidian Tasks Plugin — Emoji Format)
+
+When converting natural language to a task or managing tasks with the Tasks plugin, use the Emoji Format. Full rules in [TASKS.md](references/TASKS.md).
+
+Quick reference — strict element order, all on one line:
+
+```
+- [STATUS] #tag1 #tag2 Task description ➕ created 🛫 start ⏳ scheduled 📅 due PRIORITY 🔁 recurrence 🆔 id ⛔ depends 🏁 action
+```
+
+- Status: `- [ ]` todo · `- [x]` done · `- [-]` cancelled
+- All dates: `YYYY-MM-DD` — convert natural language dates before output
+- Priority: `🔺` highest · `⏫` high · `🔼` medium · _(none)_ normal · `🔽` low · `⏬️` lowest
+- `✅` done date only on `[x]` tasks; `❌` cancelled date only on `[-]` tasks
+- Recurring tasks (`🔁`) need at least one of `📅`, `⏳`, or `🛫`
+- Output: single task line inside a `markdown` code block, nothing else outside it
+
+## LLMwrite Blocks
+
+When a note contains an `LLMwrite` fenced code block, replace the **entire block** (opening fence, instructions, closing fence) with newly generated Markdown content. Do not wrap the output in any code block unless the instructions explicitly request it. See [LLMWRITE.md](references/LLMWRITE.md) for examples.
+
 ## Complete Example
 
 ````markdown
@@ -194,3 +248,4 @@ Reviewed in [[Meeting Notes 2024-01-10#Decisions]].
 - [Embed files](https://help.obsidian.md/embeds)
 - [Callouts](https://help.obsidian.md/callouts)
 - [Properties](https://help.obsidian.md/properties)
+- [Tasks plugin docs](https://publish.obsidian.md/tasks/)
