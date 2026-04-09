@@ -8,6 +8,13 @@
 ![[Note Name#^block-id]]
 ```
 
+Folder notes use the same embed syntax as any other note. With the outside-folder convention, the folder note `Projects.md` for `Projects/` can be embedded like this:
+
+```markdown
+![[Projects]]
+![[Projects#Roadmap]]
+```
+
 ## Embed Images
 
 ```markdown

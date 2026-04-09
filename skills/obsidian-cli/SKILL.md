@@ -1,6 +1,6 @@
 ---
 name: obsidian-cli
-description: Interact with Obsidian vaults using the Obsidian CLI to read, create, search, and manage notes, tasks, properties, and more. Also supports plugin and theme development with commands to reload plugins, run JavaScript, capture errors, take screenshots, and inspect the DOM. Use when the user asks to interact with their Obsidian vault, manage notes, search vault content, perform vault operations from the command line, or develop and debug Obsidian plugins and themes.
+description: Interact with Obsidian vaults using the Obsidian CLI to read, create, search, and manage notes, folder notes, tasks, properties, and more. Also supports plugin and theme development with commands to reload plugins, run JavaScript, capture errors, take screenshots, and inspect the DOM. Use when the user asks to interact with their Obsidian vault, manage notes or folder notes, search vault content, perform vault operations from the command line, or develop and debug Obsidian plugins and themes.
 ---
 
 # Obsidian CLI
@@ -34,6 +34,8 @@ Many commands accept `file` or `path` to target a file. Without either, the acti
 - `file=<name>` — resolves like a wikilink (name only, no path or extension needed)
 - `path=<path>` — exact path from vault root, e.g. `folder/note.md`
 
+For outside-folder folder notes, target the adjacent `.md` file directly. Example: `path="Projects.md"` refers to the folder note for `Projects/`.
+
 ## Vault targeting
 
 Commands target the most recently focused vault by default. Use `vault=<name>` as the first parameter to target a specific vault:
@@ -58,6 +60,20 @@ obsidian backlinks file="My Note"
 ```
 
 Use `--copy` on any command to copy output to clipboard. Use `silent` to prevent files from opening. Use `total` on list commands to get a count.
+
+## Folder Notes (Outside-Folder Convention)
+
+Treat the folder note as the `.md` file next to the folder.
+
+```bash
+obsidian create path="Projects.md" content="# Projects" silent
+obsidian read path="Projects.md"
+obsidian create path="Projects/Alpha.md" content="# Alpha" silent
+obsidian append path="Projects.md" content="\n- [[Projects/Alpha]]"
+obsidian property:set name="status" value="active" path="Projects.md"
+```
+
+Use `path=` when exact targeting matters, especially if the folder note and a child note could otherwise be confused.
 
 ## Plugin development
 

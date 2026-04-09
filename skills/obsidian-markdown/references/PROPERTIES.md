@@ -73,6 +73,35 @@ linklist:
 ---
 ```
 
+The same quoting rule applies to folder notes that use the outside-folder convention:
+
+```yaml
+---
+hub: "[[Projects]]"
+related:
+  - "[[Projects/Alpha]]"
+  - "[[Projects/Beta]]"
+---
+```
+
+## Folder Notes
+
+For an outside-folder folder note such as `Projects.md` paired with `Projects/`, the note is still a normal Markdown file for frontmatter purposes.
+
+```yaml
+---
+title: Projects
+aliases:
+  - Project Hub
+tags:
+  - hub
+  - project
+---
+```
+
+- Keep the filename aligned with the folder basename so the folder-note pair stays obvious.
+- Use `aliases` when you want alternative display names without changing the folder-note filename.
+
 ## JSON Properties (Input Only)
 
 Obsidian can parse properties written as a JSON object inside the frontmatter delimiters:

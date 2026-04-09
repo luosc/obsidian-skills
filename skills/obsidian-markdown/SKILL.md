@@ -1,11 +1,11 @@
 ---
 name: obsidian-markdown
-description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, Tasks plugin emoji format tasks, image insertion, and LLMwrite block processing. Use when working with .md files in Obsidian, or when the user mentions wikilinks, callouts, frontmatter, tags, embeds, tasks, or Obsidian notes.
+description: Create and edit Obsidian Flavored Markdown with wikilinks, folder notes, embeds, callouts, properties, Tasks plugin emoji format tasks, image insertion, and LLMwrite block processing. Use when working with .md files in Obsidian, or when the user mentions wikilinks, folder notes, callouts, frontmatter, tags, embeds, tasks, or Obsidian notes.
 ---
 
 # Obsidian Flavored Markdown Skill
 
-Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark and GFM with wikilinks, embeds, callouts, properties, comments, and other syntax. This skill covers only Obsidian-specific extensions -- standard Markdown (headings, bold, italic, lists, quotes, code blocks, tables) is assumed knowledge.
+Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark and GFM with wikilinks, folder-note workflows, embeds, callouts, properties, comments, and other syntax. This skill covers only Obsidian-specific extensions -- standard Markdown (headings, bold, italic, lists, quotes, code blocks, tables) is assumed knowledge.
 
 ## Git Sync (Important)
 
@@ -39,17 +39,39 @@ After completing any changes to an Obsidian vault:
 
 **Understanding wikilinks in input:** `[[Note]]`, `[[Note|Alias]]`, `[[Note#Heading]]`, `[[Note#^blockID]]` — all are valid and must be understood.
 
-## Workflow: Creating an Obsidian Note
+## Folder Notes
+
+This skill treats a folder note as the note that represents and scopes an adjacent folder. The canonical convention is **Outside-Folder**:
+
+```text
+Projects.md
+Projects/
+  Alpha.md
+  Beta.md
+```
+
+- Treat `Projects.md` and `Projects/` as a paired folder-note unit when they share the same basename and parent directory.
+- Preserve the outside-folder convention. Do not create `Projects/Projects.md` or `Projects/_about_.md` unless the vault already uses a different convention and the user explicitly wants to keep it.
+- When organizing files into a folder, read the folder note first and use it to infer the folder's purpose, naming style, and placement rules. See [FOLDER_NOTES.md](references/FOLDER_NOTES.md).
+- When creating a new topical folder, create or update both the folder note and the folder contents:
+  - `Projects.md` is the overview/index note.
+  - `Projects/` holds the child notes and assets.
+- After moving or creating child notes, update the folder note so it stays the overview, scope, and link hub for the folder.
+- Link to an outside-folder folder note with `[[Projects]]`. Use an exact path only when disambiguation is needed.
+
+## Workflow: Creating an Obsidian Note or Folder Note
 
 1. **Add frontmatter** with properties (title, tags, aliases) at the top of the file. See [PROPERTIES.md](references/PROPERTIES.md) for all property types.
-2. **Write content** using standard Markdown for structure, plus Obsidian-specific syntax below.
-3. **Link related notes** using wikilinks (`[[Note]]`) for internal vault connections, or standard Markdown links for external URLs.
-4. **Embed content** from other notes, images, or PDFs using the `![[embed]]` syntax. See [EMBEDS.md](references/EMBEDS.md) for all embed types.
-5. **Add callouts** for highlighted information using `> [!type]` syntax. See [CALLOUTS.md](references/CALLOUTS.md) for all callout types.
-6. **Handle tasks** using standard task lists or the Tasks plugin Emoji Format. See [TASKS.md](references/TASKS.md) for full emoji format rules.
-7. **Process LLMwrite blocks** by replacing them with generated Markdown content. See [LLMWRITE.md](references/LLMWRITE.md) for rules.
-8. **Insert images** following the asset-folder workflow. See [IMAGES.md](references/IMAGES.md) for the full process.
-9. **Verify** the note renders correctly in Obsidian's reading view.
+2. **Create or recognize folder notes** with the outside-folder convention when the note represents a folder or when the task is to organize files by folder. See [FOLDER_NOTES.md](references/FOLDER_NOTES.md).
+3. **Write content** using standard Markdown for structure, plus Obsidian-specific syntax below.
+4. **Link related notes** using wikilinks (`[[Note]]`) for internal vault connections, or standard Markdown links for external URLs.
+5. **If organizing notes under a folder**, read the folder note first and update it after adding, moving, or renaming child notes.
+6. **Embed content** from other notes, images, or PDFs using the `![[embed]]` syntax. See [EMBEDS.md](references/EMBEDS.md) for all embed types.
+7. **Add callouts** for highlighted information using `> [!type]` syntax. See [CALLOUTS.md](references/CALLOUTS.md) for all callout types.
+8. **Handle tasks** using standard task lists or the Tasks plugin Emoji Format. See [TASKS.md](references/TASKS.md) for full emoji format rules.
+9. **Process LLMwrite blocks** by replacing them with generated Markdown content. See [LLMWRITE.md](references/LLMWRITE.md) for rules.
+10. **Insert images** following the asset-folder workflow. See [IMAGES.md](references/IMAGES.md) for the full process.
+11. **Verify** the note renders correctly in Obsidian's reading view.
 
 ## Internal Links (Wikilinks)
 
@@ -59,6 +81,7 @@ After completing any changes to an Obsidian vault:
 [[Note Name#Heading]]                  Link to heading
 [[Note Name#^block-id]]                Link to block
 [[#Heading in same note]]              Same-note heading link
+[[Projects]]                           Link to outside-folder folder note
 ```
 
 Define a block ID by appending `^block-id` to any paragraph:
@@ -85,6 +108,7 @@ Prefix any wikilink with `!` to embed its content inline:
 ![[image.png]]                         Embed image
 ![[image.png|300]]                     Embed image with width
 ![[document.pdf#page=3]]               Embed PDF page
+![[Projects]]                          Embed outside-folder folder note
 ```
 
 See [EMBEDS.md](references/EMBEDS.md) for audio, video, search embeds, and external images.
@@ -248,4 +272,5 @@ Reviewed in [[Meeting Notes 2024-01-10#Decisions]].
 - [Embed files](https://help.obsidian.md/embeds)
 - [Callouts](https://help.obsidian.md/callouts)
 - [Properties](https://help.obsidian.md/properties)
+- [Folder Note Plugin](https://github.com/xpgo/obsidian-folder-note-plugin)
 - [Tasks plugin docs](https://publish.obsidian.md/tasks/)
